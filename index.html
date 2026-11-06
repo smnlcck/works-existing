@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>works-existing</title>
+<meta name="description" content="Replica of the current simonalcock.ie homepage Work grid — baseline for the Works section redesign.">
+<style>
+/* Layout: replica of the simonalcock.ie Work section (measured at 1440×900 and 1024) —
+   grey full-width row, 10/12 centred column, 50/60 "Work" heading, white 30px-radius card
+   holding a gutterless 3/2/1-column grid of 5:4 tiles with a white hover overlay. */
+@font-face { font-family: "EudoxusSans-Medium"; src: url("https://simonalcock.ie/wp-content/uploads/custom_fonts/EudoxusSans-Medium.ttf") format("truetype"); font-weight: 400; font-display: swap; }
+
+:root {
+  color-scheme: light;
+  --page: #fefefe;            /* body */
+  --frame: #f4f4f6;           /* .thb-borders */
+  --row: #f4f4f4;             /* Work row fill */
+  --card: #ffffff;            /* grid card */
+  --title: #333333;           /* h5 section heading */
+  --ink: #1f1f1f;             /* tile title + categories */
+  --overlay: rgba(255,255,255,.85);
+  --focus: rgba(31,31,31,.4);
+  --font-display: "EudoxusSans-Medium", Helvetica, Arial, sans-serif;
+  --font-body: Helvetica, "system-ui", -apple-system, Roboto, "Lucida Sans", sans-serif;
+  --ease-theme: cubic-bezier(0.37, 0.31, 0.2, 0.85);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--page);
+  color: rgb(80,80,80);
+  font-family: var(--font-body);
+  font-size: 16px; line-height: 1.4; letter-spacing: 0.24px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Fixed page frame (.thb-borders) — same as hero-existing */
+.frame { position: fixed; inset: 0; z-index: 999; pointer-events: none; border: 0 solid var(--frame); }
+@media (min-width: 641px) { .frame { border-width: 25px; } }
+
+/* Work row */
+.work { background: var(--row); padding-block: 80px 100px; }
+@media (min-width: 641px) { .work { padding-block: 80px 100px; } }
+.work__col {
+  width: 100%; margin: 0 auto;
+  padding-left: max(15px, env(safe-area-inset-left, 0px));
+  padding-right: max(15px, env(safe-area-inset-right, 0px));
+}
+@media (min-width: 641px) { .work__col { width: 83.3333%; padding: 0; } }
+
+.work__title {
+  margin: 0 0 51px; padding: 0 15px;
+  color: var(--title);
+  font: 400 50px/60px var(--font-display); letter-spacing: normal;
+  text-wrap: balance;
+}
+@media (max-width: 640px) { .work__title { font-size: 32px; line-height: 40px; margin-bottom: 32px; padding: 0; } }
+
+/* Card */
+.work__card {
+  background: var(--card);
+  border-radius: 30px;
+  padding-block: 24px;
+  overflow: hidden;
+}
+
+/* Grid: small 1 col, medium (641–1024) 2 cols, large 3 cols. No gutters. */
+.grid { display: grid; grid-template-columns: 1fr; list-style: none; margin: 0; padding: 0; }
+@media (min-width: 641px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1025px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+
+/* Tile */
+.tile { position: relative; aspect-ratio: 5 / 4; max-width: 100%; overflow: hidden; }
+.tile img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.tile a {
+  position: absolute; inset: 0; z-index: 5;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 30px; text-align: center; text-decoration: none; color: var(--ink);
+  background: var(--overlay);
+  opacity: 0;
+  transition: opacity .25s var(--ease-theme) .25s;
+  outline: none;
+}
+.tile h2 {
+  margin: 0 0 5px; overflow: hidden;
+  font: 400 28px/36.4px var(--font-display); color: var(--ink);
+  text-wrap: balance;
+}
+.tile .cats {
+  overflow: hidden;
+  font: 400 11px/15.4px var(--font-body); letter-spacing: 0.24px; text-transform: uppercase;
+}
+.tile h2 span, .tile .cats span {
+  display: block; transform: translateY(100%);
+  transition: transform .25s var(--ease-theme) .25s;
+}
+
+.tile:hover a, .tile a:focus-visible { opacity: 1; transition-delay: 0s; }
+.tile:hover h2 span, .tile a:focus-visible h2 span { transform: none; transition-delay: .1s; }
+.tile:hover .cats span, .tile a:focus-visible .cats span { transform: none; transition-delay: .2s; }
+.tile a:focus-visible { box-shadow: inset 0 0 0 3px var(--focus); }
+
+/* Touch screens have no hover: show the label permanently along the bottom */
+@media (hover: none) {
+  .tile a { opacity: 1; inset: auto 0 0 0; padding: 14px 20px; }
+  .tile h2 { font-size: 20px; line-height: 26px; }
+  .tile h2 span, .tile .cats span { transform: none; }
+}
+
+/* Entrance: tiles 13+ rise 30px and fade in (the live site's second and third grids) */
+@media (prefers-reduced-motion: no-preference) {
+  .js .tile.rise { opacity: 0; transform: translateY(30px); transition: opacity .8s var(--ease-theme), transform .8s var(--ease-theme); }
+  .js .tile.rise.in { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tile a, .tile h2 span, .tile .cats span { transition: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="frame" aria-hidden="true"></div>
+
+<section class="work" id="work" aria-labelledby="work-title">
+  <div class="work__col">
+    <h5 class="work__title" id="work-title">Work</h5>
+    <div class="work__card">
+      <ul class="grid">
+        <li class="tile"><img src="images/flight-search.png" alt="" loading="lazy" decoding="async"><a href="https://simonalcock.ie/portfolio/flight_search/"><h2><span>Aer Lingus Flight Search</span></h2><p class="cats"><span>Product Design, UX</span></p></a></li>
+        <li class="tile"><img src="images/two-factor.gif" alt="" loading="lazy" decoding="async"><a href="https://simonalcock.ie/portfolio/two-factor-authentication/"><h2><span>Aer Lingus Two-Factor Authentication</span></h2><p class="cats"><span>UI Design, UX</span></p></a></li>
+        <li class="tile"><img src="images/confirmation-email.png" alt="" loading="lazy" decoding="async"><a href="https://simonalcock.ie/booking-confirmation-email/"><h2><span>Aer Lingus Booking Confirmation Email</span></h2><p class="cats"><span>Accessibility, UX</span></p></a></li>
+        <li class="tile"><img src="images/conversion.png" alt="" loading="lazy" decoding="async"><a href="https://simonalcock.ie/conversion-designer/"><h2><span>Conversion Optimisation</span></h2><p class="cats"><span>Conversion Design, Optimisation</span></p></a></li>
+        <li class="tile"><img src="images/booking-flow.jpg" alt="" loading="lazy" decoding="async"><a href="https://simonalcock.ie/aer-lingus-booking-flow"><h2><span>Aer Lingus Booking Flow</span></h2><p class="cats"><span>Accessibility, Conversion Design, Product Design</span></p></a></li>
+        <li class="tile"><img src="images/iconography.png" alt="" loading="lazy" decoding="async"><a href="https://simonalcock.ie/aer-lingus-iconography/"><h2><span>Aer Lingus Iconography</span></h2><p class="cats"><span>Branding, UI Design, Web Design</span></p></a></li>
+        <li class="tile"><img src="images/accessibility.png" alt="" loading="lazy" decoding="async"><a href="https://simonalcock.ie/accessibility-design/"><h2><span>Designing for Accessibility</span></h2><p class="cats"><span>Accessibility, UX, Web Design</span></p></a></li>
+        <li class="tile"><img src="images/bohemian-fc.jpg" alt="" loading="lazy" decoding="async"><a href="https://simonalcock.ie/portfolio/bohemianfc/"><h2><span>Bohemian FC</span></h2><p class="cats"><span>Graphic Design, Web Design</span></p></a></li>
+        <li class="tile"><img src="images/brand-identity.gif" alt="" loading="lazy" decoding="async"><a href="https://simonalcock.ie/design/"><h2><span>Brand Identity</span></h2><p class="cats"><span>Branding, SME, UX</span></p></a></li>
+        <li class="tile"><img src="images/design-process.jpg" alt="" loading="lazy" decoding="async"><a href="https://simonalcock.ie/portfolio/process/"><h2><span>UX/UI Design Process</span></h2><p class="cats"><span>UI Design, UX</span></p></a></li>
+        <li class="tile"><img src="images/cock-tavern.png" alt="" loading="lazy" decoding="async"><a href="https://simonalcock.ie/portfolio/cock_tavern/"><h2><span>The Cock Tavern</span></h2><p class="cats"><span>Branding, SME, Web Design</span></p></a></li>
+        <li class="tile"><img src="images/print-design.png" alt="" loading="lazy" decoding="async"><a href="https://simonalcock.ie/design/"><h2><span>Print Design</span></h2><p class="cats"><span>Illustration, Print</span></p></a></li>
+        <li class="tile rise"><img src="images/seat-selection.png" alt="" loading="lazy" decoding="async"><a href="https://simonalcock.ie/portfolio/aer-lingus-seat-selection/"><h2><span>Aer Lingus Seat Selection</span></h2><p class="cats"><span>Accessibility, UI Design, UX</span></p></a></li>
+        <li class="tile rise"><img src="images/vanplus.jpg" alt="" loading="lazy" decoding="async"><a href="https://simonalcock.ie/design/"><h2><span>Vanplus Insurance +</span></h2><p class="cats"><span>Branding, Web Design</span></p></a></li>
+        <li class="tile rise"><img src="images/personal-projects.png" alt="" loading="lazy" decoding="async"><a href="https://simonalcock.ie/design/"><h2><span>Personal Projects</span></h2><p class="cats"><span>Branding, Print, Web Design</span></p></a></li>
+        <li class="tile rise"><img src="images/artworks.jpg" alt="" loading="lazy" decoding="async"><a href="https://simonalcock.ie/design/"><h2><span>Artworks</span></h2><p class="cats"><span>Illustration</span></p></a></li>
+        <li class="tile rise"><img src="images/search-results.jpg" alt="" loading="lazy" decoding="async"><a href="https://simonalcock.ie/flight-search-results/"><h2><span>Aer Lingus Search Results</span></h2><p class="cats"><span>Conversion Design, Optimisation, Product Design</span></p></a></li>
+        <li class="tile rise"><img src="images/boarding-pass.jpg" alt="" loading="lazy" decoding="async"><a href="https://simonalcock.ie/boarding-pass-design/"><h2><span>Aer Lingus Boarding Pass 2024</span></h2><p class="cats"><span>Product Design, UX Strategy</span></p></a></li>
+        <li class="tile rise"><img src="images/moneycube.png" alt="" loading="lazy" decoding="async"><a href="https://simonalcock.ie/portfolio/moneycube/"><h2><span>Moneycube™ Brand Development</span></h2><p class="cats"><span>Branding</span></p></a></li>
+        <li class="tile rise"><img src="images/sme-branding.gif" alt="" loading="lazy" decoding="async"><a href="https://simonalcock.ie/portfolio/sme-brand-design/"><h2><span>SME Web &amp; Branding</span></h2><p class="cats"><span>Branding, Illustration, SME</span></p></a></li>
+        <li class="tile rise"><img src="images/covid-response.jpg" alt="" loading="lazy" decoding="async"><a href="https://simonalcock.ie/portfolio/aer-lingus-covid-response/"><h2><span>COVID Response Projects</span></h2><p class="cats"><span>UI Design, UX</span></p></a></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<script>
+(function () {
+  if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  document.documentElement.classList.add('js');
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -10% 0px' });
+  document.querySelectorAll('.tile.rise').forEach(function (t) {
+    var r = t.getBoundingClientRect();
+    if (r.top < innerHeight) t.classList.add('in'); else io.observe(t);
+  });
+})();
+</script>
+</body>
+</html>
